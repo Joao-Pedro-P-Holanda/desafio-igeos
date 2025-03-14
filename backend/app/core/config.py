@@ -6,7 +6,7 @@ class Config(BaseSettings):
         env_file=".env", env_file_encoding="utf-8", extra="ignore"
     )
 
-    # TODO: fill with environment variables needed to connect with external services
+    DATABASE_URL: str
 
 
-config = Config()
+config = Config()  # type:ignore

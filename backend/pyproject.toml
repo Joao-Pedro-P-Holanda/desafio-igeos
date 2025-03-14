@@ -5,7 +5,17 @@ description = "API for dashboards about operation costs on the Sistema Interliga
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "alembic>=1.15.1",
     "fastapi[standard]>=0.115.11",
-    "google-cloud-bigquery>=3.30.0",
+    "psycopg[binary]>=3.2.6",
     "pydantic-settings>=2.8.1",
+    "sqlalchemy[asyncio]>=2.0.39",
+]
+
+[dependency-groups]
+scripts = [
+    "google-cloud-bigquery>=3.30.0",
+]
+dev = [
+    "aiosqlite>=0.21.0",
 ]
