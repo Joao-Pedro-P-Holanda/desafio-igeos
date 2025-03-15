@@ -6,7 +6,8 @@ import {
   Scripts,
   ScrollRestoration,
 } from "react-router";
-
+import { Header } from "./components/header";
+import { ThemeProvider } from "./components/theme-provider"
 import type { Route } from "./+types/root";
 import "./app.css";
 
@@ -33,7 +34,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        {children}
+        <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
+          <Header />
+          {children}
+        </ThemeProvider>
         <ScrollRestoration />
         <Scripts />
       </body>
