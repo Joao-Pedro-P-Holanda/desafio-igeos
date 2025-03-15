@@ -1,9 +1,10 @@
 from datetime import date
 from typing import Literal
-from fastapi import APIRouter
+from fastapi import APIRouter, Security
+from ..core.security import validate_token
 
 
-router = APIRouter()
+router = APIRouter(dependencies=[Security(validate_token)])
 
 
 @router.get("/balanco-energia")
