@@ -8,6 +8,7 @@ import {
 } from "react-router";
 import { Header } from "./components/header";
 import { ThemeProvider } from "./components/theme-provider"
+import { Auth0Provider } from '@auth0/auth0-react';
 import type { Route } from "./+types/root";
 import "./app.css";
 
@@ -26,7 +27,7 @@ export const links: Route.LinksFunction = () => [
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="pt-BR">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -34,10 +35,21 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
-          <Header />
-          {children}
-        </ThemeProvider>
+        <Auth0Provider
+          domain="dev-cs56io82okt8qfik.us.auth0.com"
+          clientId="KNqTl7OBCjIc4HDCDM8RslBAoJPl9qfw"
+          authorizationParams={{
+            redirect_uri: typeof window !== 'undefined' ? window.location.origin : undefined,
+            audience: 'https://sin-dashboard/api'
+          }}
+          useRefreshTokens={true}
+          cacheLocation="localstorage"
+        >
+          <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
+            <Header />
+            {children}
+          </ThemeProvider>
+        </Auth0Provider>
         <ScrollRestoration />
         <Scripts />
       </body>
