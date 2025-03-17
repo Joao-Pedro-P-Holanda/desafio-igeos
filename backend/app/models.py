@@ -83,8 +83,8 @@ class SubSystemProductionStatement(Base):
 
 class HourlySubSystemProductionStatement(SubSystemProductionStatement):
     __tablename__ = "balanco_subsistema_horario"
-    valor_carga: Mapped[float] = mapped_column()
-    valor_intercambio: Mapped[float] = mapped_column()
+    valor_carga: Mapped[float | None] = mapped_column()
+    valor_intercambio: Mapped[float | None] = mapped_column()
 
 
 class HalfHourlySubSystemProductionStatement(SubSystemProductionStatement):

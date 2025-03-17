@@ -157,41 +157,47 @@ async def main():
     if not DATABASE_URL:
         raise ValueError("DATABASE_URL not set")
 
-    raw_data_paths, treated_data_paths = await scrape_tables()
+    try:
+        raw_data_paths, treated_data_paths = await scrape_tables()
 
-    # for every table stores a tuple with the table name and the corresponding dataframe
-    data_for_table_name: list[tuple[str, pl.DataFrame]] = []
+        # for every table stores a tuple with the table name and the corresponding dataframe
+        data_for_table_name: list[tuple[str, pl.DataFrame]] = []
 
-    data_for_table_name.append(get_raw_data(raw_data_paths))
+        data_for_table_name.append(get_raw_data(raw_data_paths))
 
-    for treated in treated_data_paths:
-        data_for_table_name.append(_read_csv(treated))
+        for treated in treated_data_paths:
+            data_for_table_name.append(_read_csv(treated))
 
-    engine = create_async_engine(DATABASE_URL)
-    async with engine.begin() as conn:
-        metadata = MetaData()
-        await conn.run_sync(metadata.reflect)
-        tables_dict = metadata.tables
+        engine = create_async_engine(DATABASE_URL)
+        async with engine.begin() as conn:
+            metadata = MetaData()
+            await conn.run_sync(metadata.reflect)
+            tables_dict = metadata.tables
 
-        try:
-            # all tables have information about subsystems, choosing the first one
-            # by convention
-            await _insert_on_table(
-                "subsistema", tables_dict, data_for_table_name[0][1], conn, unique=True
-            )
-            for table_name, data in data_for_table_name:
-                await _insert_on_table(table_name, tables_dict, data, conn)
-            await conn.commit()
-            logger.info("Successfully pulled table info from csv files")
-        except Exception:
-            logger.exception("Error saving data on tables")
-            await conn.rollback()
-        finally:
             try:
-                shutil.rmtree(os.path.join(os.path.dirname(__file__), "csv"))
-            except OSError as e:
-                if e.errno != errno.ENOENT:
-                    logger.error(f"Unexpected error removing csv files: code {e.errno}")
+                # all tables have information about subsystems, choosing the first one
+                # by convention
+                await _insert_on_table(
+                    "subsistema",
+                    tables_dict,
+                    data_for_table_name[0][1],
+                    conn,
+                    unique=True,
+                )
+                for table_name, data in data_for_table_name:
+                    await _insert_on_table(table_name, tables_dict, data, conn)
+                await conn.commit()
+                logger.info("Successfully pulled table info from csv files")
+            except Exception:
+                logger.exception("Error saving data on tables")
+                await conn.rollback()
+
+    finally:
+        try:
+            shutil.rmtree(os.path.join(os.path.dirname(__file__), "csv"))
+        except OSError as e:
+            if e.errno != errno.ENOENT:
+                logger.error(f"Unexpected error removing csv files: code {e.errno}")
 
 
 async def _insert_on_table(
@@ -228,17 +234,16 @@ async def _insert_on_table(
 
 
 def get_raw_data(raw_files: list[str]) -> tuple[str, pl.DataFrame]:
-    dataframes = [_read_csv(file, separator=";") for file in raw_files]
-    result_df = pl.DataFrame()
-    for df in dataframes:
-        result_df = pl.concat([df[1]])
-    return dataframes[0][0], result_df
+    dataframe_for_table = [_read_csv(file, separator=";") for file in raw_files]
+
+    result_df = pl.concat([pair[1] for pair in dataframe_for_table])
+    return dataframe_for_table[0][0], result_df
 
 
 async def scrape_tables() -> tuple[list[str], list[str]]:
     logger.info(f"Starting scraping of csv files in path {BASE_TABLES_URL}")
     async with async_playwright() as playwright:
-        browser = await playwright.chromium.launch(headless=False)
+        browser = await playwright.chromium.launch(headless=True)
         page = await browser.new_page()
         response = await page.goto(BASE_TABLES_URL)
 
@@ -286,12 +291,11 @@ async def _download_original_tables(browser: Browser, url: str) -> list[str]:
 
     resources = await page.locator("li.resource-item").all()
 
-    click_resources_tasks = [
-        _download_raw_csv_resource(page, resource) for resource in resources
-    ]
-
-    paths = await asyncio.gather(*click_resources_tasks)
-    paths = list(filter(lambda x: x is not None, paths))
+    paths: list[str] = []
+    for resource in resources:
+        download = await _download_raw_csv_resource(page, resource)
+        if download:
+            paths.append(download)
 
     return paths
 
@@ -299,7 +303,8 @@ async def _download_original_tables(browser: Browser, url: str) -> list[str]:
 async def _download_raw_csv_resource(page: Page, resource: Locator) -> str | None:
     if await resource.locator('span[data-format="csv"]').count() > 0:
         async with page.expect_download() as download_info:
-            await resource.locator("a.resource-url-analytics").dispatch_event("click")
+            resource_download_url = resource.locator("a.resource-url-analytics")
+            await resource_download_url.dispatch_event("click")
         download = await download_info.value
         path = os.path.join(
             os.path.dirname(__file__),
