@@ -8,3 +8,9 @@ wheels/
 
 # Virtual environments
 .venv
+
+# development files
+*.db
+*.csv
+*.gz
+*~lock*
