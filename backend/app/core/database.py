@@ -2,7 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 
 from .config import config
 
-engine = create_async_engine(config.DATABASE_URL)
+engine = create_async_engine(config.DATABASE_URL.get_secret_value())
 
 
 def get_async_session() -> async_sessionmaker[AsyncSession]:
