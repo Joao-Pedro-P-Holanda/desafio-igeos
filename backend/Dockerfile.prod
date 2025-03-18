@@ -1,0 +1,33 @@
+ARG PYTHON_VERSION=3.13.2
+
+FROM python:${PYTHON_VERSION}-slim AS base
+
+# Keeps Python from buffering stdout and stderr to avoid situations where
+# the application crashes without emitting any logs due to buffering.
+ENV PYTHONUNBUFFERED=1
+
+ENV ENV=production
+
+ENV UVICORN_PORT=8000
+
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+
+# Copy the application into the container.
+COPY . /app
+
+WORKDIR /app
+
+# Install the application dependencies.
+RUN --mount=type=cache,target=/root/.cache \
+  --mount=type=bind,source=uv.lock,target=uv.lock \
+  --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
+  uv sync --locked --no-dev --group scripts
+
+RUN /app/.venv/bin/playwright install --with-deps chromium
+
+# Expose the port that the application listens on.
+EXPOSE ${UVICORN_PORT}
+
+# entrypoint performs migrations and start the server with the appropriate setting for ENV
+ENTRYPOINT [ "sh" , "/app/scripts/docker-entrypoint.sh"]
+
