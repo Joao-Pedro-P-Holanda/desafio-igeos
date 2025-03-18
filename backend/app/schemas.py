@@ -47,3 +47,17 @@ class HalfHourlyEnergyStatementResponse(BaseModel):
     dados: list[HalfHourlyEnergyStatement]
 
 
+class WeeklySubSystemMarginalCostSchema(BaseModel):
+    id_subsistema: str
+    custo_marginal_operacao_semanal: float
+    custo_marginal_operacao_semanal_carga_leve: float
+    custo_marginal_operacao_semanal_carga_media: float
+    custo_marginal_operacao_semanal_carga_pesada: float
+    data: date
+
+
+class HalfHourlySubSystemMarginalCostSchema(BaseModel):
+    id_subsistema: str
+    custo_marginal_operacao: float
+    data: date
+    hora: time

@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from .routes import subsystems, energy_statements, costs
+from .routes import subsystems, energy_statements, marginal_costs
 
 app = FastAPI(title="SIN Dashboard API")
 
@@ -19,4 +19,6 @@ app.include_router(subsystems.router, prefix="/subsistemas", tags=["Subsistemas"
 app.include_router(
     energy_statements.router, prefix="/balanco-energia", tags=["Balanço de Energia"]
 )
-app.include_router(costs.router, prefix="/cmo", tags=["Custo Marginal de Operação"])
+app.include_router(
+    marginal_costs.router, prefix="/cmo", tags=["Custo Marginal de Operação"]
+)
