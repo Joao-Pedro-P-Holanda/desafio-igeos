@@ -9,9 +9,7 @@ from ..crud.marginal_costs_crud import CostCrud
 from ..deps import AsyncSessionMakerDep
 from ..schemas import (
     HalfHourlySubSystemMarginalCostResponse,
-    HalfHourlySubSystemMarginalCostSchema,
     WeeklySubSystemMarginalCostResponse,
-    WeeklySubSystemMarginalCostSchema,
 )
 
 router = APIRouter(dependencies=[Security(validate_token)])
@@ -28,7 +26,7 @@ async def get_weekly_costs(
     """
     Retorna informações do Custo Marginal de Operação de todos os subsistemas agrupadas
     pela semana de medição. Os dados estão disponíveis da primeira semana de 2005
-    (07/01/2005) até a primeira semana de março em 2024 (08/03/2025).
+    (07/01/2005) até a primeira semana de março em 2024 (08/03/2024).
     """
 
     if data_inicial > data_final:
