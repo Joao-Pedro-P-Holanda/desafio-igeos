@@ -26,7 +26,7 @@ async def get_hourly_energy_statements(
     """
     Retorna o balanço de energia geral com os dados de todos os subsistemas agrupados
     por data e hora de medição. Utiliza as medições no padrão antigo, medidas de hora em
-    hora
+    hora. Medidos desde primeiro de janeiro de 2000 até 13 de março de 2025
     """
     if data_inicial > data_final:
         raise InvalidArgumentException(

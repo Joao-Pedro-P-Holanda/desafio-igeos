@@ -1,6 +1,6 @@
 from datetime import date
 import logging
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from app.exceptions.database import NotFoundException
@@ -36,7 +36,15 @@ class EnergyStatementCrud:
         hora
         """
         async with self._session_maker() as session:
-            statement = (
+            count_statement = select(
+                func.count(HourlySubSystemProductionStatement.id)
+            ).filter(
+                HourlySubSystemProductionStatement.data.between(
+                    data_inicial, data_final
+                )
+            )
+
+            list_statement = (
                 select(HourlySubSystemProductionStatement)
                 .filter(
                     HourlySubSystemProductionStatement.data.between(
@@ -50,10 +58,18 @@ class EnergyStatementCrud:
                 .limit(limit)
                 .offset(offset)
             )
-            result = (await session.execute(statement)).scalars().all()
+
+            result = (await session.execute(list_statement)).scalars().all()
+
+            if not result:
+                raise NotFoundException(
+                    f"Nenhuma medição de energia horária disponível entre as datas {data_inicial.strftime('%d-%m-%Y')} e {data_final.strftime('%d-%m-%Y')}"
+                )
+
+            count_result = (await session.execute(count_statement)).scalar_one()
 
         return EnergyStatementResponse(
-            total_registros=len(result),
+            total_registros=count_result,
             data_inicial=data_inicial,
             data_final=data_final,
             dados=[
@@ -88,6 +104,8 @@ class EnergyStatementCrud:
                 .offset(offset)
             )
             result = (await session.execute(statement)).scalars().all()
+
+            count_result = (await session.execute(count_statement)).scalar_one()
 
             if not result:
                 raise NotFoundException(
