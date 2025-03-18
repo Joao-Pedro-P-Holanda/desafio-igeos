@@ -8,7 +8,9 @@ from ..exceptions.query import InvalidArgumentException
 from ..crud.marginal_costs_crud import CostCrud
 from ..deps import AsyncSessionMakerDep
 from ..schemas import (
+    HalfHourlySubSystemMarginalCostResponse,
     HalfHourlySubSystemMarginalCostSchema,
+    WeeklySubSystemMarginalCostResponse,
     WeeklySubSystemMarginalCostSchema,
 )
 
@@ -22,7 +24,7 @@ async def get_weekly_costs(
     session_maker: AsyncSessionMakerDep,
     limite: int = 500,
     deslocamento: int = 0,
-) -> list[WeeklySubSystemMarginalCostSchema]:
+) -> WeeklySubSystemMarginalCostResponse:
     """
     Retorna informações do Custo Marginal de Operação de todos os subsistemas agrupadas
     pela semana de medição. Os dados estão disponíveis da primeira semana de 2005
@@ -47,10 +49,11 @@ async def get_half_hourly_costs(
     session_maker: AsyncSessionMakerDep,
     limite: int = 500,
     deslocamento: int = 0,
-) -> list[HalfHourlySubSystemMarginalCostSchema]:
+) -> HalfHourlySubSystemMarginalCostResponse:
     """
     Retorna o valor do Custo Marginal de Operação de todos os subsistemas agrupados
-    pela data e hora da medição, os intervalos de medição são de 30 minutos
+    pela data e hora da medição, os intervalos de medição são de 30 minutos. Os dados
+    estão disponíveis de 1º de janeiro de 2020 (01/01/2020) até 3 de março de 2024 (03/03/2024)
     """
     if data_inicial > data_final:
         raise InvalidArgumentException(

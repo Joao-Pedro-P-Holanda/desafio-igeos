@@ -56,8 +56,22 @@ class WeeklySubSystemMarginalCostSchema(BaseModel):
     data: date
 
 
+class WeeklySubSystemMarginalCostResponse(BaseModel):
+    total_registros: int
+    data_inicial: date
+    data_final: date
+    dados: list[WeeklySubSystemMarginalCostSchema]
+
+
 class HalfHourlySubSystemMarginalCostSchema(BaseModel):
     id_subsistema: str
     custo_marginal_operacao: float
     data: date
     hora: time
+
+
+class HalfHourlySubSystemMarginalCostResponse(BaseModel):
+    total_registros: int
+    data_inicial: date
+    data_final: date
+    dados: list[HalfHourlySubSystemMarginalCostSchema]
