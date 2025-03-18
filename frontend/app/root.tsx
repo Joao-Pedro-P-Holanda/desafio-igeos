@@ -43,6 +43,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
             audience: 'https://sin-dashboard/api'
           }}
           useRefreshTokens={true}
+          useRefreshTokensFallback={true}
           cacheLocation="localstorage"
         >
           <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
