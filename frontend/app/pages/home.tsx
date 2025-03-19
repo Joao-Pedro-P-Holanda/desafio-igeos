@@ -15,6 +15,21 @@ export function HomePage() {
       <p className="text-lg">
         Os dados do balanço de energia estão divididos em medições realizadas a cada hora e outras medições realizadas a cada meia hora, segundo o Modelo de Despacho Hidrotérmico de Curtíssimo Prazo, novo de cálculo implementado em 2020 que realiza medições a cada meia hora. Os dados do CMO estão divididos em agregados calculados semanalmente e medidas calculadas a cada meia hora
       </p>
+      <div className="flex flex-row justify-center min-w-full gap-3">
+        <Button variant='outline'>
+          <Link to="/geracao-energia" className="font-bold">
+            Clique aqui para ir ver os detalhes de geração de energia
+          </Link>
+          <ArrowRight />
+        </Button>
+        <Button variant='outline'>
+          <Link to="/custos-energia" className="font-bold">
+            Clique aqui para ir ver os detalhes do custo marginal de operação
+          </Link>
+          <ArrowRight />
+        </Button>
+      </div>
+
     </main>
   )
 }

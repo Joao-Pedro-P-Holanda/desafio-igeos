@@ -32,7 +32,17 @@ export function Header() {
         <NavigationMenuList>
           <NavigationMenuItem>
             <NavLink to="/" className={navigationMenuTriggerStyle()}>
-              Dashboards
+              Home
+            </NavLink>
+          </NavigationMenuItem>
+          <NavigationMenuItem>
+            <NavLink to="/geracao-energia" className={navigationMenuTriggerStyle()}>
+              Balanço de Energia
+            </NavLink>
+          </NavigationMenuItem>
+          <NavigationMenuItem>
+            <NavLink to="/custos-energia" className={navigationMenuTriggerStyle()}>
+              Custo Marginal de Operação
             </NavLink>
           </NavigationMenuItem>
         </NavigationMenuList>
