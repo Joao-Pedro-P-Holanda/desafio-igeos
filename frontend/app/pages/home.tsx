@@ -13,7 +13,7 @@ export function HomePage() {
         Bem vindo aos dashboards do SIN, uma Prova de Conceito (POC) dos dados disponibilizados pelo Operador Nacional do Sistema Elétrico (ONS) sobre. Você pode encontrar detalhes do balanço de energia com diferentes matrizes para cada subsistema e também detalhes sobre o custo marginal de operação (CMO) nesses subsistemas ao longo do tempo.
       </p>
       <p className="text-lg">
-        Os dados do balanço de energia estão divididos em medições realizadas a cada hora e outras medições realizadas a cada meia hora, segundo o Modelo de Despacho Hidrotérmico de Curtíssimo Prazo, novo de cálculo implementado em 2020 que realiza medições a cada meia hora. Os dados do CMO estão divididos em agregados calculados semanalmente e medidas calculadas a cada meia hora
+        Os dados do balanço de energia estão divididos em medições realizadas a cada hora e outras medições realizadas a cada meia hora, segundo o Modelo de Despacho Hidrotérmico de Curtíssimo Prazo (DESSEM), novo de cálculo implementado em 2020 que realiza medições a cada meia hora. Os dados do CMO estão divididos em agregados calculados semanalmente e medidas calculadas a cada meia hora
       </p>
       <div className="flex flex-row justify-center min-w-full gap-3">
         <Button variant='outline'>
